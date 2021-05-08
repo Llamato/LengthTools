@@ -1,0 +1,15 @@
+inp
+push
+48
+sub
+inp
+ror
+dup
+ror
+add
+outa
+inp
+dup
+cond
+gotou
+5
