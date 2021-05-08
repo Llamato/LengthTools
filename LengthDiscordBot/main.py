@@ -3,6 +3,7 @@ __author__ = "Llamato#9612"
 
 import asyncio
 import sys
+import os
 import threading
 import queue
 from typing import Iterable
@@ -10,7 +11,7 @@ from typing import Iterable
 import discord
 import lengthtools
 import aiohttp
-TOKEN = "ODM4MzI2NTA0Njg0OTEyNjQw.YI5eZg.n_hopMt3nL2ewjyd2VamSTN7mtg"
+TOKEN = os.environ['LengthBotToken']
 client = discord.Client()
 
 CodePrefix = "LP:"
