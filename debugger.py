@@ -1,8 +1,7 @@
 __version__ = "1.0"
 __author__ = "Llamato"
 
-from lengthtools.disassembler import diassembler
-from lengthtools.interpreter import interpreter
+from interpreter import interpreter
 import sys
 
 if __name__ == "__main__":
