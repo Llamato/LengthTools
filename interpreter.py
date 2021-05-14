@@ -175,7 +175,7 @@ class LengthThread(threading.Thread):
         self.InputStream.close()
         self.OutputStream.close()
 
-    def execute(self, ignore_invalid_commands=False):
+    def execute(self, ignore_invalid_commands=True):
         self.State = NoError
         self.ProgramCounter = 0
         while self.ProgramCounter < len(self.Code) and self.State == NoError:
@@ -223,5 +223,5 @@ if __name__ == "__main__":
         line = line.rstrip("\n")
         program.append(disassembler.disassemble_code(line))
     MainThread = LengthThread(program)
-    MainThread.execute(True)
+    MainThread.execute()
     MainThread.stop()
