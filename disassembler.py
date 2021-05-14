@@ -7,8 +7,6 @@ from instructions import Instructions
 def disassemble_code(block):
     if "\n" in block:
         blocks = block.splitlines()
-        while "" in blocks:
-            blocks.remove("")
         for index, current_block in enumerate(blocks):
             blocks[index] = disassemble_code(current_block)
         return blocks
