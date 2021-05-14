@@ -6,9 +6,7 @@ import disassembler
 import sys
 import threading
 from collections import deque
-
-NoError = 0
-Stopped = 255
+from enum import Enum
 
 
 class StackUnderflowError(Exception):
@@ -52,11 +50,16 @@ class Stack:
         self.Storage[b] = temp
 
 
+
 class LengthThread(threading.Thread):
+    class States(Enum):
+        New = 0
+        NoError = 1
+        Stopped = 255
     def __init__(self, code, input_stream=sys.stdin, output_stream=sys.stdout):
         threading.Thread.__init__(self)
         self.Stack = Stack()
-        self.State = NoError
+        self.State = LengthThread.States.New
         self.ProgramCounter = 0
         self.Code = code
         self.InputStream = input_stream
@@ -169,27 +172,30 @@ class LengthThread(threading.Thread):
         instruction_pointer[self.Code[self.ProgramCounter]]()
 
     def stop(self):
-        self.State = Stopped
+        self.State = LengthThread.States.Stopped
         self.ProgramCounter = 0
         self.Stack.Storage.clear()
         self.InputStream.close()
         self.OutputStream.close()
 
     def execute(self, ignore_invalid_commands=True):
-        self.State = NoError
+        self.State = LengthThread.States.NoError
         self.ProgramCounter = 0
-        while self.ProgramCounter < len(self.Code) and self.State == NoError:
+        while self.ProgramCounter < len(self.Code) and self.State == LengthThread.States.NoError:
             try:
                 self.step()
             except (IndexError, KeyError):
                 if ignore_invalid_commands:
+                    print("Invalid Command ignored",file=sys.stderr)  # Debug???
                     self.ProgramCounter += 1
                 else:
                     self.State = InvalidCommandError.Code
                     raise InvalidCommandError(InvalidCommandError.Message)
+        self.State = LengthThread.States.Stopped
 
     def run(self):  # Needed for Multithreading
-        self.execute()
+        if self.State == LengthThread.States.New:
+            self.execute()
 
     def __del__(self):
         self.stop()
@@ -224,4 +230,3 @@ if __name__ == "__main__":
         program.append(disassembler.disassemble_code(line))
     MainThread = LengthThread(program)
     MainThread.execute()
-    MainThread.stop()
